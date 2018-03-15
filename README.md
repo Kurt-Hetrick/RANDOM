@@ -9,7 +9,7 @@ By default it uses up to 75% of the available cpu processors, but this is config
 
 The output will be written into the directory that you point it to as;
 
-md_target-dirctory_Day Month Date hh:mm:ss zone yyyy.txt
+md_target-directory_Day Month Date hh:mm:ss zone yyyy.txt
 
 example:
 
@@ -20,6 +20,16 @@ example:
 `MD5_RECURSIVE_PARALLEL.sh /path/to/directory 50`
 
 * will utilize 50% of the total cpu processors on the server
+
+**the bigger the machine, the faster your md5sum will run. you should use qlogin into a server and request multiple slots.**
+
+* sunrhel4 is the biggest (this has 80 total cpu processors on here)
+
+`qlogin -q rhel7.q -pe slots 8`
+
+* sunrhel3 and DellR730 are the same size (48 cpu processors) although the DellR730 should be faster overall, but if you don't really care as long as you get one of the big servers then you can do
+
+`qlogin -q qlogin -q rhel7.q,bigmem.q,bigdata.q -pe slots 8`
 
 ## Variant_Summary_Stat_To_Text.sh
 
