@@ -51,6 +51,8 @@ takes a qc report, for each sample determines if they meet the following metrics
 
 appends new column to the end of the qc report. creates a new qc report with "COVERAGE_BIN.csv" appended to the file name.
 
+3 means it meets all 3; 0 means it meets none of them
+
 _usage_
 
 `Haiman_Coverage_Metric_Binner.sh /path/to/qc_report`
