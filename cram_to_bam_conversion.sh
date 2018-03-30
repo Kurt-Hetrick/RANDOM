@@ -54,3 +54,6 @@ $IN_CRAM \
 $SAMTOOLS_DIR/samtools \
 index \
 $BAM_DIR/$SM_TAG".bam"
+
+cp $BAM_DIR/$SM_TAG".bam.bai" \
+$BAM_DIR/$SM_TAG".bai"
