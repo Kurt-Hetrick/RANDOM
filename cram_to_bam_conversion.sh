@@ -24,6 +24,8 @@
 
 set
 
+echo
+
 SAMTOOLS_DIR="/mnt/research/tools/LINUX/SAMTOOLS/samtools-1.6"
 
 IN_CRAM=$1 # Input CRAM File
@@ -44,8 +46,8 @@ SM_TAG=$(basename $IN_CRAM .cram)
 # Using samtools-1.3 or later to convert a bam file to a cram file with the same file name with the .cram extension
 
 $SAMTOOLS_DIR/samtools \
-view -b \
-$IN_CRAM \
+view \
+-b $IN_CRAM \
 -o $BAM_DIR/$SM_TAG".bam" \
 -T $REF_GENOME
 
