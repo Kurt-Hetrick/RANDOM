@@ -5,7 +5,7 @@
 #$ -S /bin/bash 
 
 # tell sge to submit any of these queue when available
-#$ -q bigdata.q,prod.q,rnd.q,test.q,uhoh.q
+#$ -q bigdata.q,prod.q,rnd.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
@@ -50,6 +50,8 @@ fi
 # OUTPUT_PER_RG writes a pair of fastq files per lane and named based on the Platform Unit found in the header of the BAM file
 # Because you couldn't populate platform unit with bina have to set the RG_TAG to ID
 
+# RG_TAG=ID \
+
 java -jar $PICARD_DIR/picard.jar \
 RevertSam \
 INPUT=$INFILE \
@@ -62,7 +64,6 @@ VALIDATION_STRINGENCY=SILENT \
 SamToFastq \
 INPUT=/dev/stdin \
 REFERENCE_SEQUENCE=$REF_GENOME \
-RG_TAG=ID \
 OUTPUT_PER_RG=true \
 OUTPUT_DIR=$OUT_DIR \
 VALIDATION_STRINGENCY=SILENT
