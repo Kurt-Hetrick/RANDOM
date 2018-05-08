@@ -20,8 +20,7 @@ $JAVA_1_8/java -jar \
 $GATK_DIR/GenomeAnalysisTK.jar \
 -T SelectVariants \
 -R $REF_GENOME \
--sn $SAMPLE_LIST \
---keepOriginalAC \
+-sf $SAMPLE_LIST \
 --variant $IN_VCF \
 -env \
 -o $OUT_DIR/$OUT_VCF".vcf.gz"
