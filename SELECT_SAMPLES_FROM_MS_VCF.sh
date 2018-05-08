@@ -23,4 +23,6 @@ $GATK_DIR/GenomeAnalysisTK.jar \
 -sn $SAMPLE_LIST \
 --keepOriginalAC \
 --variant $IN_VCF \
--o $OUT_DIR/OUT_VCF".vcf.gz"
+-o $OUT_DIR/$OUT_VCF".vcf.gz"
+
+echo $OUT_VCF".vcf.gz" was written to $OUT_DIR
