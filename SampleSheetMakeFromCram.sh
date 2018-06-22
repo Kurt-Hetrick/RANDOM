@@ -27,25 +27,25 @@
 # create a file with the header
 
 echo \
-	Project,\
-	FCID,\
-	Lane,\
-	Index,\
-	Platform,\
-	Library_Name,\
-	Date,\
-	SM_Tag,\
-	Center,\
-	Description,\
-	Seq_Exp_ID,\
-	Genome_Ref,\
-	Operator,\
-	Extra_VCF_Filter_Params,\
-	TS_TV_BED_File,\
-	Baits_BED_File,\
-	Targets_BED_File,\
-	KNOWN_SITES_VCF,\
-	KNOWN_INDEL_FILES\
+Project,\
+FCID,\
+Lane,\
+Index,\
+Platform,\
+Library_Name,\
+Date,\
+SM_Tag,\
+Center,\
+Description,\
+Seq_Exp_ID,\
+Genome_Ref,\
+Operator,\
+Extra_VCF_Filter_Params,\
+TS_TV_BED_File,\
+Baits_BED_File,\
+Targets_BED_File,\
+KNOWN_SITES_VCF,\
+KNOWN_INDEL_FILES\
 >| $CORE_PATH/$IN_PROJECT/$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
 
 CREATE_SAMPLE_ARRAY ()
@@ -69,15 +69,15 @@ GRAB_CRAM_HEADER_FORMAT ()
 	$IN_CRAM \
 		| grep ^@RG \
 		| sed 's/:/\t/g' \
-		| awk 'BEGIN {OFS=","} {split($17,PLATFORM_UNIT,"_"); split($7,DATE_TIME,"T"); split(DATE_TIME[1],DATE,"-"); \
+		| awk 'BEGIN {OFS=","} {split($19,PLATFORM_UNIT,"_"); split($9,DATE_TIME,"T"); split(DATE_TIME[1],DATE,"-"); \
 			print "'$PROJECT'",\
 			PLATFORM_UNIT[1],\
 			PLATFORM_UNIT[2],\
 			PLATFORM_UNIT[3],\
-			$15,\
-			$11,\
+			$17,\
+			$13,\
 			DATE[2]"/"DATE[3]"/"DATE[1],\
-			$19,\
+			$21,\
 			$5,\
 			"HiSeq-2500_HighOutput",\
 			"do_not_care",\
