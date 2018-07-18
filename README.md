@@ -61,6 +61,16 @@ _example_
 
 `/mnt/research/tools/LINUX/00_GIT_REPO_KURT/RANDOM/Haiman_Coverage_Metric_Binner.sh /mnt/research/active/Haiman_ProstateCa_SeqWholeExome_080814_1/REPORTS/QC_Reports/Haiman_AllSamples_MEH.csv`
 
+## DUP_FILE_LOCAL_TO_SM_CONVERTER.sh
+
+takes the dups file and the master sample key and converts the local id to sm tag.
+
+writes the new file to you home directory
+
+_usage_
+
+`DUP_FILE_LOCAL_TO_SM_CONVERTER.sh /path/to/dup_file /path/to/master_key`
+
 ---
 
 REFERENCES
