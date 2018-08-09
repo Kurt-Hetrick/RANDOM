@@ -48,51 +48,64 @@ KNOWN_SITES_VCF,\
 KNOWN_INDEL_FILES\
 >| $CORE_PATH/$IN_PROJECT/$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
 
-CREATE_SAMPLE_ARRAY ()
-{
-SAMPLE_ARRAY=(`awk 1 $QC_REPORT \
-	| sed 's/\r//g; /^$/d' \
-	| awk 'BEGIN {FS=","} $1=="'$SM_TAG'" {print $1,$2}' \
-	| sort -k1,1 -k 2,2 \
-	| uniq`)
+# function for creating an arrary per sample containing the project that the sample belongs to using the qc report.
 
-		#  1  Project=the Seq Proj folder name
-		SM_TAG=${SAMPLE_ARRAY[0]}
+	CREATE_SAMPLE_ARRAY ()
+	{
+		SAMPLE_ARRAY=(`awk 1 $QC_REPORT \
+			| sed 's/\r//g; /^$/d' \
+			| awk 'BEGIN {FS=","} $1=="'$SM_TAG'" {print $1,$2}' \
+			| sort -k1,1 -k 2,2 \
+			| uniq`)
 
-		#  2  FCID=flowcell that sample read group was performed on
-		PROJECT=${SAMPLE_ARRAY[1]}
-}
+				#  1  Project=the Seq Proj folder name
+				SM_TAG=${SAMPLE_ARRAY[0]}
 
-GRAB_CRAM_HEADER_FORMAT ()
-{
-	$SAMTOOLS_DIR/samtools view -H \
-	$IN_CRAM \
-		| grep ^@RG \
-		| sed 's/:/\t/g' \
-		| awk 'BEGIN {OFS=","} {split($19,PLATFORM_UNIT,"_"); split($9,DATE_TIME,"T"); split(DATE_TIME[1],DATE,"-"); \
-			print "'$PROJECT'",\
-			PLATFORM_UNIT[1],\
-			PLATFORM_UNIT[2],\
-			PLATFORM_UNIT[3],\
-			$17,\
-			$13,\
-			DATE[2]"/"DATE[3]"/"DATE[1],\
-			$21,\
-			$5,\
-			"HiSeq-2500_HighOutput",\
-			"do_not_care",\
-			"'$REF_GENOME'",\
-			"KNH",\
-			"-2",\
-			"'$TS_TV_BED_FILE'",\
-			"'$BAIT_BED_FILE'",\
-			"'$TARGET_BED_FILE'",\
-			"'$DBSNP'",\
-			"'$KNOWN_INDEL_FILES'"}' \
-		| sed 's/HiSeq2000/HiSeq-2000/g' \
-		| sed 's/HiSeq2500/HiSeq-2500/g' \
-		>> $OUTPUT_SAMPLE_SHEET
-}
+				#  2  FCID=flowcell that sample read group was performed on
+				PROJECT=${SAMPLE_ARRAY[1]}
+	}
+
+# function for grabbing the cram header and creating a sample sheet records per platform unit
+
+	GRAB_CRAM_HEADER_FORMAT ()
+	{
+		$SAMTOOLS_DIR/samtools view -H \
+		$IN_CRAM \
+			| grep ^@RG \
+			| awk \
+				-v PU_TAG="$PU_TAG" \
+				-v DT_TAG="$DT_TAG" \
+				-v PL_TAG="$PL_TAG" \
+				-v LB_TAG="$LB_TAG" \
+				-v CN_TAG="$CN_TAG" \
+				'BEGIN {OFS=","} {split($PU_TAG,PU_FIELD,":"); split(PU_FIELD[2],PLATFORM_UNIT,"_"); \
+				split($DT_TAG,DT_FIELD,":"); split$DT_FIELD[2],DATE_TIME,"T"); split(DATE_TIME[1],DATE,"-"); \
+				split(PL_TAG,PL_FIELD,":"); \
+				split(LB_TAG,LB_FIELD,":"); \
+				split(CN_TAG,CN_FIELD,":"); \
+				print "'$PROJECT'",\
+				PLATFORM_UNIT[1],\
+				PLATFORM_UNIT[2],\
+				PLATFORM_UNIT[3],\
+				PL_FIELD[2],\
+				LB_FIELD[2],\
+				DATE[2]"/"DATE[3]"/"DATE[1],\
+				"'$SM_TAG'",\
+				CN_FIELD[2],\
+				"HiSeq-2500_HighOutput",\
+				"do_not_care",\
+				"'$REF_GENOME'",\
+				"KNH",\
+				"-2",\
+				"'$TS_TV_BED_FILE'",\
+				"'$BAIT_BED_FILE'",\
+				"'$TARGET_BED_FILE'",\
+				"'$DBSNP'",\
+				"'$KNOWN_INDEL_FILES'"}' \
+			| sed 's/HiSeq2000/HiSeq-2000/g' \
+			| sed 's/HiSeq2500/HiSeq-2500/g' \
+			>> $OUTPUT_SAMPLE_SHEET
+	}
 
 for SM_TAG in $(awk 'BEGIN {FS=","} NR>1 {print $1}' $QC_REPORT | sort | uniq)
 do
@@ -101,5 +114,77 @@ do
 
 		IN_CRAM=$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram"
 
+				# grab field number for PLATFORM_UNIT_TAG
+
+					PU_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^PU:/ {print $1}'`)
+
+				# grab field number for DATE_TAG
+
+					DT_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^DT:/ {print $1}'`)
+
+				# grab PL field
+
+					PL_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^PL:/ {print $1}'`)
+
+				# grab LB field
+
+					LB_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^LB:/ {print $1}'`)
+
+				# grab SM field
+
+					CN_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^CN:/ {print $1}'`)
+
+				# grab the PM field
+
+					PM_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^PM:/ {print $1}'`)
+
+				# grab the DS field for the bed files
+
+					DS_TAG=(`$SAMTOOLS_DIR/samtools view -H \
+					$CORE_PATH/$PROJECT/CRAM/$SM_TAG".cram" \
+						| grep -m 1 ^@RG \
+						| sed 's/\t/\n/g' \
+						| cat -n \
+						| sed 's/^ *//g' \
+						| awk '$2~/^DS:/ {print $1}'`)
+
 	GRAB_CRAM_HEADER_FORMAT
 done
+
+echo SAMPLE SHEET was written to $OUTPUT_SAMPLE_SHEET
