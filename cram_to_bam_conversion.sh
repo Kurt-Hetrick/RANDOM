@@ -5,7 +5,7 @@
 #$ -S /bin/bash
 
 # tell sge to submit any of these queue when available
-#$ -q rnd.q,prod.q,bigdata.q
+#$ -q rnd.q,prod.q,bigdata.q,c6320.q,lemon.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
@@ -26,7 +26,7 @@ set
 
 echo
 
-SAMTOOLS_DIR="/mnt/research/tools/LINUX/SAMTOOLS/samtools-1.6"
+SAMTOOLS_DIR="/isilon/sequencing/Kurt/Programs/PYTHON/Anaconda2-5.0.0.1/bin"
 
 IN_CRAM=$1 # Input CRAM File
 BAM_DIR=$2 # Output BAM File Path
