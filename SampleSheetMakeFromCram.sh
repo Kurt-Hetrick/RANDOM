@@ -99,9 +99,9 @@ KNOWN_INDEL_FILES\
 				"'$REF_GENOME'",\
 				"KNH",\
 				"-2",\
-				BED_FILE[3],\
-				BED_FILE[1],\
-				BED_FILE[2],\
+				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[3] ".bed",\
+				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[1] ".bed",\
+				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[2] ".bed",\
 				"'$DBSNP'",\
 				"'$KNOWN_INDEL_FILES'"}' \
 			| sed 's/HiSeq2000/HiSeq-2000/g' \
