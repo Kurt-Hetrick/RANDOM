@@ -1,14 +1,14 @@
 #$ -S /bin/bash
-#$ -q rnd.q,prod.q,test.q
+#$ -q rnd.q,prod.q,lemon.q,c6320.q,bigdata.q
 #$ -cwd
 #$ -V
-#$ -p -1000
+#$ -p -11
 
 set
 
-VCF_tools_dir="/isilon/sequencing/Kurt/Programs/VCFtools/vcftools_0.1.10/bin"
+VCF_tools_dir="/cm/shared/apps/vcftools/0.1.12b/bin"
 PLINK_DIR="/isilon/sequencing/Kurt/Programs/PLINK/plink-1.07-x86_64"
-CORE_PATH="/isilon/sequencing/Seq_Proj/"
+CORE_PATH="/mnt/research/active/"
 
 # Elizabeth's data/scripts Z:\ep\macrogen\pcrfree
 

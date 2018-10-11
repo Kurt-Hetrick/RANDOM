@@ -15,13 +15,17 @@
 	KNOWN_INDEL_FILES="/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/1000G_phase1.indels.b37.vcf;/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf"
 	CORE_PATH="/mnt/research/active"
 
-module load samtools
+# OTHER VARIABLS
 
-sleep 1s
+	# module load samtools
 
-TIMESTAMP=`date '+%F.%H-%M-%S'`
+		SAMTOOLS_DIR="/isilon/sequencing/Kurt/Programs/PYTHON/Anaconda2-5.0.0.1/bin"
 
-OUTPUT_SAMPLE_SHEET=$(echo $CORE_PATH/$PROJECT/$PROJECT"_SAMPLE_SHEET_"$TIMESTAMP".csv")
+	sleep 1s
+
+	TIMESTAMP=`date '+%F.%H-%M-%S'`
+
+	OUTPUT_SAMPLE_SHEET=$(echo $CORE_PATH/$PROJECT/$PROJECT"_SAMPLE_SHEET_"$TIMESTAMP".csv")
 
 # create a file with the header
 
@@ -51,7 +55,7 @@ KNOWN_INDEL_FILES\
 
 	GRAB_BAM_HEADER_FORMAT ()
 	{
-		samtools view -H \
+		$SAMTOOLS_DIR/samtools view -H \
 		$BAM_FILE \
 			| grep ^@RG \
 			| awk \
@@ -92,11 +96,11 @@ KNOWN_INDEL_FILES\
 for BAM_FILE in $(cat $INPUT_BAM_LIST)
 do
 
-		SM_TAG=$(basename $BAM_FILE .bam)
+		SM_TAG=$(basename $BAM_FILE .bam | sed 's/.cram//g')
 
 				# grab field number for PLATFORM_UNIT_TAG
 
-					PU_TAG=(`samtools view -H \
+					PU_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
@@ -106,7 +110,7 @@ do
 
 				# grab field number for DATE_TAG
 
-					DT_TAG=(`samtools view -H \
+					DT_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
@@ -116,7 +120,7 @@ do
 
 				# grab PL field
 
-					PL_TAG=(`samtools view -H \
+					PL_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
@@ -126,7 +130,7 @@ do
 
 				# grab LB field
 
-					LB_TAG=(`samtools view -H \
+					LB_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
@@ -136,7 +140,7 @@ do
 
 				# grab SM field
 
-					CN_TAG=(`samtools view -H \
+					CN_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
@@ -147,7 +151,7 @@ do
 				# grab the PM field
 				# in our old pipeline, the DS tag was populated with the platform model
 
-					PM_TAG=(`samtools view -H \
+					PM_TAG=(`$SAMTOOLS_DIR/samtools view -H \
 					$BAM_FILE \
 						| grep -m 1 ^@RG \
 						| sed 's/\t/\n/g' \
