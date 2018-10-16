@@ -26,8 +26,10 @@ mkdir -p $CORE_PATH/$PROJECT/MENDEL_CHECK/TEMP/
 
 # Yank out trio from multi-sample vcf for passing SNVs only
 
-$VCF_tools_dir/vcftools \
---vcf $CORE_PATH/$PROJECT/MULTI_SAMPLE/$IN_VCF \
+
+zless $CORE_PATH/$PROJECT/MULTI_SAMPLE/$IN_VCF \
+| $VCF_tools_dir/vcftools \
+--vcf - \
 --indv $CHILD \
 --indv $MOM \
 --indv $DAD \
@@ -38,8 +40,9 @@ $VCF_tools_dir/vcftools \
 
 # Yank out trio from multi-sample vcf for passing INDELs only
 
-$VCF_tools_dir/vcftools \
---vcf $CORE_PATH/$PROJECT/MULTI_SAMPLE/$IN_VCF \
+zless $CORE_PATH/$PROJECT/MULTI_SAMPLE/$IN_VCF \
+| $VCF_tools_dir/vcftools \
+--vcf - \
 --indv $CHILD \
 --indv $MOM \
 --indv $DAD \
