@@ -3,7 +3,7 @@
 SAMPLE_SHEET=$1 # sample sheet for the samples that you want to include in this batch
 GVCF_LIST=$2 # this is the gvcf list from the last mendel release
 
-SAMPLE_SHEET_UNIQUE_SAMPLE_COUNT=`awk 1 $SAMPLE_SHEET | sed 's/\r//g' | awk 'BEGIN {FS=","} NR>1 {print $8}' $SAMPLE_SHEET | sort | uniq | wc -l`
+SAMPLE_SHEET_UNIQUE_SAMPLE_COUNT=`awk 1 $SAMPLE_SHEET | sed 's/\r//g' | awk 'BEGIN {FS=","} NR>1 {print $8}' | sort | uniq | wc -l`
 
 echo There are $SAMPLE_SHEET_UNIQUE_SAMPLE_COUNT unique samples in the sample sheet
 
