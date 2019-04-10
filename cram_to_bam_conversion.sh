@@ -26,7 +26,7 @@ set
 
 echo
 
-SAMTOOLS_DIR="/isilon/sequencing/Kurt/Programs/PYTHON/Anaconda2-5.0.0.1/bin"
+SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
 
 IN_CRAM=$1 # Input CRAM File
 BAM_DIR=$2 # Output BAM File Path
