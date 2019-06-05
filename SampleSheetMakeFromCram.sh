@@ -3,7 +3,7 @@
 # INPUT PARAMETERS
 
 	QC_REPORT=$1 # full path to the qc report file that you want to create a sample sheet for
-	IN_PROJECT=$2 # full path to the directorry where you want the sample sheet written too 
+	OUT_PROJECT=$2 # folder name where you want the sample sheet written to
 	BUILD=$3
 
 # if 3rd argument is absent ref genome, dbsnp and known indels are for grch37, if present then they will be for grch38
@@ -31,7 +31,7 @@ fi
 
 	TIMESTAMP=`date '+%F.%H-%M-%S'`
 
-		OUTPUT_SAMPLE_SHEET=$CORE_PATH"/"$IN_PROJECT"/"$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
+		OUTPUT_SAMPLE_SHEET=$CORE_PATH"/"$OUT_PROJECT"/"$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
 
 # create a file with the header
 
@@ -55,7 +55,7 @@ Baits_BED_File,\
 Targets_BED_File,\
 KNOWN_SITES_VCF,\
 KNOWN_INDEL_FILES\
->| $CORE_PATH/$IN_PROJECT/$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
+>| $CORE_PATH/$OUT_PROJECT/$QC_REPORT_NAME"_SAMPLE_SHEET_"$TIMESTAMP".csv"
 
 # function for creating an arrary per sample containing the project that the sample belongs to using the qc report.
 
@@ -108,9 +108,9 @@ KNOWN_INDEL_FILES\
 				"'$REF_GENOME'",\
 				"KNH",\
 				"-2",\
-				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[3] ".bed",\
-				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[1] ".bed",\
-				"'$CORE_PATH'" "/" "'$IN_PROJECT'" "/BED_Files/" BED_FILE[2] ".bed",\
+				"'$CORE_PATH'" "/" "'$OUT_PROJECT'" "/BED_Files/" BED_FILE[3] ".bed",\
+				"'$CORE_PATH'" "/" "'$OUT_PROJECT'" "/BED_Files/" BED_FILE[1] ".bed",\
+				"'$CORE_PATH'" "/" "'$OUT_PROJECT'" "/BED_Files/" BED_FILE[2] ".bed",\
 				"'$DBSNP'",\
 				"'$KNOWN_INDEL_FILES'"}' \
 			| sed 's/HiSeq2000/HiSeq-2000/g' \
