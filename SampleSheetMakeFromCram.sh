@@ -2,20 +2,26 @@
 
 # INPUT PARAMETERS
 
-	QC_REPORT=$1
-	IN_PROJECT=$2
-	# TS_TV_BED_FILE=$3
-	# BAIT_BED_FILE=$4
-	# TARGET_BED_FILE=$5
-	REF_GENOME=$3
-	DBSNP=$4
-	KNOWN_INDEL_FILES=$5
+	QC_REPORT=$1 # full path to the qc report file that you want to create a sample sheet for
+	IN_PROJECT=$2 # full path to the directorry where you want the sample sheet written too 
+	BUILD=$3
+
+# if 3rd argument is absent ref genome, dbsnp and known indels are for grch37, if present then they will be for grch38
+
+
+if [[ ! $BUILD ]]
+	then
+		REF_GENOME="/mnt/research/tools/PIPELINE_FILES/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta"
+		DBSNP="/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/dbsnp_138.b37.vcf"
+		KNOWN_INDEL_FILES="/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/1000G_phase1.indels.b37.vcf;/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf"
+	else
+		REF_GENOME="/mnt/shared_resources/public_resources/GRCh38DH/GRCh38_full_analysis_set_plus_decoy_hla.fa"
+		DBSNP="/mnt/research/tools/PIPELINE_FILES/GRCh38_aux_files/Homo_sapiens_assembly38.dbsnp138.vcf"
+		KNOWN_INDEL_FILES="/mnt/research/tools/PIPELINE_FILES/GRCh38_aux_files/Homo_sapiens_assembly38.known_indels.vcf.gz;/mnt/research/tools/PIPELINE_FILES/GRCh38_aux_files/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"
+fi
 
 # STATIC VARIABLES
 
-	# REF_GENOME="/mnt/research/tools/PIPELINE_FILES/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta"
-	# DBSNP="/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/dbsnp_138.b37.vcf"
-	# KNOWN_INDEL_FILES="/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/1000G_phase1.indels.b37.vcf;/mnt/research/tools/PIPELINE_FILES/GATK_resource_bundle/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf"
 	SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
 	CORE_PATH="/mnt/research/active"
 
