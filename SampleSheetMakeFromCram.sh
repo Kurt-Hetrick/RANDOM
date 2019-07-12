@@ -88,11 +88,13 @@ KNOWN_INDEL_FILES\
 				-v LB_TAG="$LB_TAG" \
 				-v CN_TAG="$CN_TAG" \
 				-v DS_TAG="$DS_TAG" \
+				-v PM_TAG="$PM_TAG" \
 				'BEGIN {OFS=","} {split($PU_TAG,PU_FIELD,":"); split(PU_FIELD[2],PLATFORM_UNIT,"_"); \
 				split($DT_TAG,DT_FIELD,":"); split(DT_FIELD[2],DATE_TIME,"T"); split(DATE_TIME[1],DATE,"-"); \
 				split($PL_TAG,PL_FIELD,":"); \
 				split($LB_TAG,LB_FIELD,":"); \
 				split($CN_TAG,CN_FIELD,":"); \
+				split($PM_TAG,PM_FIELD,":"); \
 				split($DS_TAG,DS_FIELD,":"); split(DS_FIELD[2],BED_FILE,","); \
 				print "'$PROJECT'",\
 				PLATFORM_UNIT[1],\
@@ -103,7 +105,7 @@ KNOWN_INDEL_FILES\
 				DATE[2]"/"DATE[3]"/"DATE[1],\
 				"'$SM_TAG'",\
 				CN_FIELD[2],\
-				"HiSeq-2500_HighOutput",\
+				PM_FIELD[2],\
 				"do_not_care",\
 				"'$REF_GENOME'",\
 				"KNH",\
