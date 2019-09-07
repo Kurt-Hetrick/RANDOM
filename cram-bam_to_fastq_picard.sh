@@ -114,7 +114,7 @@ echo
 					echo $PLATFORM_UNIT"_1.fastq" $FASTQ_FILE_MD5_READ_1 $GZIP_FASTQ_FILE_MD5_READ_1 >> $OUT_DIR/md5_validation.txt
 					echo
 				else
-					printf "$OUT_DIR/$PLATFORM_UNIT"_1.fastq"  did not compress successfully" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
+					printf "$OUT_DIR/$PLATFORM_UNIT"_1.fastq" did not compress successfully on $HOSTNAME at `date`" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
 			fi
 	}
 
@@ -149,13 +149,13 @@ echo
 					echo $PLATFORM_UNIT"_2.fastq" $FASTQ_FILE_MD5_READ_2 $GZIP_FASTQ_FILE_MD5_READ_2 >> $OUT_DIR/md5_validation.txt
 					echo
 				else
-					printf "$OUT_DIR/$PLATFORM_UNIT"_2.fastq"  did not compress successfully" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
+					printf "$OUT_DIR/$PLATFORM_UNIT"_2.fastq" did not compress successfully on $HOSTNAME at `date`" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
 			fi
 	}
 
 # loop through platform units and gzip files
 
-	for PLATFORM_UNIT in $($SAMTOOLS_DIR/samtools view -H $INFILE | grep ^@RG | awk -v PU_FIELD="$PU_FIELD" 'BEGIN {OFS="\t"} {split($PU_FIELD,PU,":"); print PU[2]}' | sed 's/[~-]/_/g');
+	for PLATFORM_UNIT in $($SAMTOOLS_DIR/samtools view -H $INFILE | grep ^@RG | awk -v PU_FIELD="$PU_FIELD" 'BEGIN {OFS="\t"} {split($PU_FIELD,PU,":"); print PU[2]}' | sed 's/~/_/g');
 		do
 			GZIP_FASTQ_1
 			GZIP_FASTQ_2
