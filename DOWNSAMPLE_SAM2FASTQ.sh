@@ -46,10 +46,6 @@ echo
 
 	PICARD_DIR="/mnt/linuxtools/PICARD/picard-2.20.6"
 
-	# module load java/1.7.0_80
-
-	# PICARD_DIR="/mnt/research/tools/LINUX/PICARD/picard-tools-1.141"
-
 # DOWNSAMPLE CRAM FILE, RESORT TO QUERYNAME CONVERT TO FASTQ
 
 java -jar \
