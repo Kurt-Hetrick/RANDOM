@@ -29,6 +29,7 @@
 # INPUT ARGUMENTS
 
 	INFILE=$1 # Input CRAM File
+		SM_TAG=$(basename $INFILE .cram)
 	OUT_DIR=$2 # Output Directory for Fastq Files
 	DOWNSAMPLE_FRACTION=$3 # FRACTION THAT YOU WANT TO DOWNSAMPLE TO, 0 TO 1
 	REF_GENOME=$4 # Reference genome in fasta format used for creating BAM file. Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
@@ -48,34 +49,64 @@
 	PICARD_DIR="/mnt/linuxtools/PICARD/picard-2.20.6"
 	SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
 
-# DOWNSAMPLE CRAM FILE, RESORT TO QUERYNAME CONVERT TO FASTQ
+# DOWNSAMPLE CRAM/BAM FILE, RESORT TO QUERYNAME AND CONVERT TO FASTQ
 
 	java -jar \
-	$PICARD_DIR/picard.jar \
-	DownsampleSam \
-	INPUT=$INFILE \
-	OUTPUT=/dev/stdout \
-	PROBABILITY=$DOWNSAMPLE_FRACTION \
-	REFERENCE_SEQUENCE=$REF_GENOME \
-	VALIDATION_STRINGENCY=SILENT \
-	COMPRESSION_LEVEL=0 \
-		| java -jar \
-			$PICARD_DIR/picard.jar \
-			RevertSam \
-			INPUT=/dev/stdin \
-			OUTPUT=/dev/stdout \
-			SORT_ORDER=queryname \
-			REFERENCE_SEQUENCE=$REF_GENOME \
-			COMPRESSION_LEVEL=0 \
-			VALIDATION_STRINGENCY=SILENT \
-		| java -jar \
-			$PICARD_DIR/picard.jar \
-			SamToFastq \
-			INPUT=/dev/stdin \
-			REFERENCE_SEQUENCE=$REF_GENOME \
-			OUTPUT_PER_RG=true \
-			OUTPUT_DIR=$OUT_DIR \
-			VALIDATION_STRINGENCY=SILENT
+		-Xmx16g \
+		$PICARD_DIR/picard.jar \
+		DownsampleSam \
+		INPUT=$INFILE \
+		OUTPUT=/dev/stdout \
+		PROBABILITY=$DOWNSAMPLE_FRACTION \
+		REFERENCE_SEQUENCE=$REF_GENOME \
+		VALIDATION_STRINGENCY=SILENT \
+	| java -jar \
+		$PICARD_DIR/picard.jar \
+		RevertSam \
+		INPUT=/dev/stdin \
+		OUTPUT=/dev/stdout \
+		SORT_ORDER=queryname \
+		REFERENCE_SEQUENCE=$REF_GENOME \
+		COMPRESSION_LEVEL=0 \
+		VALIDATION_STRINGENCY=SILENT \
+	| java -jar \
+		$PICARD_DIR/picard.jar \
+		SamToFastq \
+		INPUT=/dev/stdin \
+		REFERENCE_SEQUENCE=$REF_GENOME \
+		OUTPUT_PER_RG=true \
+		OUTPUT_DIR=$OUT_DIR \
+		VALIDATION_STRINGENCY=SILENT
+
+# # DOWNSAMPLE CRAM/BAM FILE, RESORT TO QUERYNAME AND CONVERT TO FASTQ. this is for smaller cram/bam files
+
+# 	java -jar \
+# 		-Xmx16g \
+# 		$PICARD_DIR/picard.jar \
+# 		DownsampleSam \
+# 		INPUT=$INFILE \
+# 		OUTPUT=/dev/stdout \
+# 		PROBABILITY=$DOWNSAMPLE_FRACTION \
+# 		STRATEGY=Chained \
+# 		REFERENCE_SEQUENCE=$REF_GENOME \
+# 		VALIDATION_STRINGENCY=SILENT \
+# 	| java -jar \
+# 		$PICARD_DIR/picard.jar \
+# 		RevertSam \
+# 		INPUT=/dev/stdin \
+# 		OUTPUT=/dev/stdout \
+# 		SORT_ORDER=queryname \
+# 		REFERENCE_SEQUENCE=$REF_GENOME \
+# 		COMPRESSION_LEVEL=0 \
+# 		VALIDATION_STRINGENCY=SILENT \
+# 	| java -jar \
+# 		$PICARD_DIR/picard.jar \
+# 		SamToFastq \
+# 		INPUT=/dev/stdin \
+# 		REFERENCE_SEQUENCE=$REF_GENOME \
+# 		OUTPUT_PER_RG=true \
+# 		OUTPUT_DIR=$OUT_DIR \
+# 		VALIDATION_STRINGENCY=SILENT
 
 # obtain the field number that contains the platform unit tag to pull out from
 
