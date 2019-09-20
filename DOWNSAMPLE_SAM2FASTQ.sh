@@ -5,7 +5,7 @@
 #$ -S /bin/bash 
 
 # tell sge to submit any of these queue when available
-#$ -q prod.q,rnd.q,c6320.q,lemon.q,c6420.q
+#$ -q prod.q,rnd.q,c6420.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
@@ -49,6 +49,10 @@
 	PICARD_DIR="/mnt/linuxtools/PICARD/picard-2.20.6"
 	SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
 
+# MAKE THE OUTPUT DIRECTORY IF NOT ALREADY PRESENT
+
+mkdir -p $OUT_DIR
+
 # DOWNSAMPLE CRAM/BAM FILE, RESORT TO QUERYNAME AND CONVERT TO FASTQ
 
 	java -jar \
@@ -78,35 +82,35 @@
 		OUTPUT_DIR=$OUT_DIR \
 		VALIDATION_STRINGENCY=SILENT
 
-# # DOWNSAMPLE CRAM/BAM FILE, RESORT TO QUERYNAME AND CONVERT TO FASTQ. this is for smaller cram/bam files
+# DOWNSAMPLE CRAM/BAM FILE, RESORT TO QUERYNAME AND CONVERT TO FASTQ. this is for smaller cram/bam files
 
-# 	java -jar \
-# 		-Xmx16g \
-# 		$PICARD_DIR/picard.jar \
-# 		DownsampleSam \
-# 		INPUT=$INFILE \
-# 		OUTPUT=/dev/stdout \
-# 		PROBABILITY=$DOWNSAMPLE_FRACTION \
-# 		STRATEGY=Chained \
-# 		REFERENCE_SEQUENCE=$REF_GENOME \
-# 		VALIDATION_STRINGENCY=SILENT \
-# 	| java -jar \
-# 		$PICARD_DIR/picard.jar \
-# 		RevertSam \
-# 		INPUT=/dev/stdin \
-# 		OUTPUT=/dev/stdout \
-# 		SORT_ORDER=queryname \
-# 		REFERENCE_SEQUENCE=$REF_GENOME \
-# 		COMPRESSION_LEVEL=0 \
-# 		VALIDATION_STRINGENCY=SILENT \
-# 	| java -jar \
-# 		$PICARD_DIR/picard.jar \
-# 		SamToFastq \
-# 		INPUT=/dev/stdin \
-# 		REFERENCE_SEQUENCE=$REF_GENOME \
-# 		OUTPUT_PER_RG=true \
-# 		OUTPUT_DIR=$OUT_DIR \
-# 		VALIDATION_STRINGENCY=SILENT
+	# java -jar \
+	# 	-Xmx16g \
+	# 	$PICARD_DIR/picard.jar \
+	# 	DownsampleSam \
+	# 	INPUT=$INFILE \
+	# 	OUTPUT=/dev/stdout \
+	# 	PROBABILITY=$DOWNSAMPLE_FRACTION \
+	# 	STRATEGY=Chained \
+	# 	REFERENCE_SEQUENCE=$REF_GENOME \
+	# 	VALIDATION_STRINGENCY=SILENT \
+	# | java -jar \
+	# 	$PICARD_DIR/picard.jar \
+	# 	RevertSam \
+	# 	INPUT=/dev/stdin \
+	# 	OUTPUT=/dev/stdout \
+	# 	SORT_ORDER=queryname \
+	# 	REFERENCE_SEQUENCE=$REF_GENOME \
+	# 	COMPRESSION_LEVEL=0 \
+	# 	VALIDATION_STRINGENCY=SILENT \
+	# | java -jar \
+	# 	$PICARD_DIR/picard.jar \
+	# 	SamToFastq \
+	# 	INPUT=/dev/stdin \
+	# 	REFERENCE_SEQUENCE=$REF_GENOME \
+	# 	OUTPUT_PER_RG=true \
+	# 	OUTPUT_DIR=$OUT_DIR \
+	# 	VALIDATION_STRINGENCY=SILENT
 
 # obtain the field number that contains the platform unit tag to pull out from
 
