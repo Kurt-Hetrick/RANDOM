@@ -168,7 +168,7 @@ mkdir -p $OUT_DIR
 					rm -rvf $OUT_DIR/$PLATFORM_UNIT"_2.fastq"
 					echo
 				else
-					printf "$OUT_DIR/$PLATFORM_UNIT"_2.fastq" did not compress successfully on $HOSTNAME at `date`" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
+					printf "$OUT_DIR/$PLATFORM_UNIT"_2.fastq"\n for $INFILE\n did not compress successfully on\n $HOSTNAME at\n `date`" | mail -s "UH-OH A BOO-BOO HAPPENED" khetric1@jhmi.edu 
 			fi
 	}
 
