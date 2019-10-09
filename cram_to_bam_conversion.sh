@@ -5,7 +5,7 @@
 #$ -S /bin/bash
 
 # tell sge to submit any of these queue when available
-#$ -q rnd.q,prod.q,bigdata.q,c6320.q,lemon.q
+#$ -q rnd.q,prod.q,c6420.q,lemon.q,c6320.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
@@ -22,40 +22,45 @@
 # export all variables, useful to find out what compute node the program was executed on
 # redirecting stderr/stdout to file as a log.
 
-set
+	set
 
-echo
+	echo
 
-SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
+# INPUT VARIABLES
 
-IN_CRAM=$1 # Input CRAM File
-BAM_DIR=$2 # Output BAM File Path
-REF_GENOME=$3 # Reference genome used for creating BAM file. Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
+	SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
 
-DEFAULT_REF_GENOME=/mnt/research/tools/PIPELINE_FILES/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta
+	IN_CRAM=$1 # Input CRAM File
+	BAM_DIR=$2 # Output BAM File Path
+	REF_GENOME=$3 # Reference genome used for creating BAM file. Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
 
-if [[ ! $REF_GENOME ]]
-	then
-	REF_GENOME=$DEFAULT_REF_GENOME
-fi
+	DEFAULT_REF_GENOME=/mnt/research/tools/PIPELINE_FILES/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta
 
-SM_TAG=$(basename $IN_CRAM .cram)
+		if [[ ! $REF_GENOME ]]
+			then
+			REF_GENOME=$DEFAULT_REF_GENOME
+		fi
 
-# For further information: http://www.htslib.org/doc/samtools.html
+	SM_TAG=$(basename $IN_CRAM .cram)
+
+# make output directory if it does not already exist.
+
+	mkdir -p $BAM_DIR
 
 # Using samtools-1.3 or later to convert a bam file to a cram file with the same file name with the .cram extension
+# For further information: http://www.htslib.org/doc/samtools.html
 
-$SAMTOOLS_DIR/samtools \
-view \
--b $IN_CRAM \
--o $BAM_DIR/$SM_TAG".bam" \
--T $REF_GENOME
+	$SAMTOOLS_DIR/samtools \
+	view \
+	-b $IN_CRAM \
+	-o $BAM_DIR/$SM_TAG".bam" \
+	-T $REF_GENOME
 
 # Using samtools-1.3 or later to create an index file for the recently created cram file with the extension .crai
 
-$SAMTOOLS_DIR/samtools \
-index \
-$BAM_DIR/$SM_TAG".bam"
+	$SAMTOOLS_DIR/samtools \
+	index \
+	$BAM_DIR/$SM_TAG".bam"
 
-cp $BAM_DIR/$SM_TAG".bam.bai" \
-$BAM_DIR/$SM_TAG".bai"
+	cp $BAM_DIR/$SM_TAG".bam.bai" \
+	$BAM_DIR/$SM_TAG".bai"
