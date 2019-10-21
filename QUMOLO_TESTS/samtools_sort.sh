@@ -16,50 +16,39 @@
 # export all variables, useful to find out what compute node the program was executed on
 # redirecting stderr/stdout to file as a log.
 
-set
+	set
 
-echo
+	echo
 
-THREADS=$1
-INSTANCE=$2
-TEST_TYPE=$3 # (SINGLE OR FLOOD)
-PLATFORM=$4 # (QUMOLO OR ISILON)
-JOB_COUNT=$5
-QUEUE_SLOTS=$6
-TOTAL_SLOTS=$7
+# INPUT ARGUMENTS
 
-if [ $PLATFORM == 'ISILON' ]
-then
-CORE_PATH="/isilon/sequencing/Seq_Proj/"
-else
-CORE_PATH="/jhg-qumulo/Sequencing/Seq_Proj/"
-fi
+	THREADS=$1 # number of threads for samtools
+	INSTANCE=$2 # what subfolder under the hostname subfolder where the output goes to
+	TEST_TYPE=$3 # (SINGLE, a single job submission, OR FLOOD, entire queue or cluster of queues)
+	JOB_COUNT=$4 # the number of jobs submitted along with this one
+	QUEUE_SLOTS=$5 # how many jobs slots were requested for this job
+	TOTAL_SLOTS=$6 # how many total job slots were available in the queue(s) for the submission that this job was part of.
 
-# if [ $PLATFORM == 'ISILON' ]
-# then
-# SAMTOOLS_DIR="/isilon/sequencing/Seq_Proj/"
-# else
-# SAMTOOLS_DIR="/jhg-qumulo/Sequencing/Seq_Proj/"
-# fi
+# STATIC VARIABLES
 
-if [ $PLATFORM == 'ISILON' ]
-then
-TEMP="/isilon/sequencing/Kurt/QUMOLO_TESTS/"
-else
-TEMP="/jhg-qumulo/Sequencing/Seq_Proj/QUMOLO_TESTS/"
-fi
+	SAMTOOLS_DIR="/mnt/linuxtools/ANACONDA/anaconda2-5.0.0.1/bin"
+	INPUT_FILE="/mnt/research/active/QUMULO_TESTING/CRAM/NA12891-0238064159.cram"
+	TEMP="/mnt/research/active/QUMULO_TESTING/TEMP"
 
-HOSTNAME=`hostname`
+# make directories for the temporary output
 
-mkdir -p $TEMP/QUMOLO_TESTS/$HOSTNAME/$INSTANCE
+	mkdir -p $TEMP/$HOSTNAME/$INSTANCE
 
 START_SAMTOOLS_SORT=`date '+%s'`
 
-samtools sort -n --threads $THREADS \
-$CORE_PATH/Haiman_ProstateCa_SeqWholeExome_080814_1/BAM/AGGREGATE/102485-0224132002.bam \
--o $TEMP/QUMOLO_TESTS/$HOSTNAME/$INSTANCE/foo.bam
+$SAMTOOLS_DIR/samtools \
+	sort -n \
+	--threads $THREADS \
+	$INPUT_FILE \
+	-o $TEMP/$HOSTNAME/$INSTANCE/foo.sorted.cram
 
 END_SAMTOOLS_SORT=`date '+%s'`
 
-echo SAMTOOLS_SORT"," $HOSTNAME"," $INSTANCE"," $THREADS ","$TEST_TYPE","$PLATFORM","$JOB_COUNT","$QUEUE_SLOTS","$TOTAL_SLOTS","$START_SAMTOOLS_SORT","$END_SAMTOOLS_SORT \
->> /isilon/sequencing/Kurt/QUMOLO_TESTS/BWA_MEM.WALL_CLOCK_TIMES.csv
+echo SAMTOOLS_SORT"," $HOSTNAME"," $INSTANCE"," $THREADS ","$TEST_TYPE","$JOB_COUNT","$QUEUE_SLOTS","$TOTAL_SLOTS","$START_SAMTOOLS_SORT","$END_SAMTOOLS_SORT \
+| awk 'BEGIN {FS=",";OFS=","} {print $0,$10-$9,($10-$9)/60,($10-$9)/3600}' \
+>> $TEMP/../BWA_MEM.WALL_CLOCK_TIMES.csv

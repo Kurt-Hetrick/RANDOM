@@ -16,58 +16,65 @@
 # export all variables, useful to find out what compute node the program was executed on
 # redirecting stderr/stdout to file as a log.
 
-set
+	set
 
-echo
+	echo
 
-THREADS=$1
-INSTANCE=$2
-TEST_TYPE=$3 # (SINGLE OR FLOOD)
-PLATFORM=$4 # (QUMOLO OR ISILON)
-JOB_COUNT=$5
-QUEUE_SLOTS=$6
-TOTAL_SLOTS=$7
+# INPUT ARGUMENTS
 
-module load bwa/0.7.8
+	THREADS=$1 # number of threads for bwa
+	INSTANCE=$2 # what subfolder under the hostname subfolder where the output goes to
+	TEST_TYPE=$3 # (SINGLE, a single job submission, OR FLOOD, entire queue or cluster of queues)
+	JOB_COUNT=$4 # the number of jobs submitted along with this one
+	QUEUE_SLOTS=$5 # how many jobs slots were requested for this job
+	TOTAL_SLOTS=$6 # how many total job slots were available in the queue(s) for the submission that this job was part of.
 
-if [ $PLATFORM == 'ISILON' ]
-then
-CORE_PATH="/isilon/sequencing/Seq_Proj/"
-else
-CORE_PATH="/jhg-qumulo/Sequencing/Seq_Proj/"
-fi
+# STATIC VARIRABLES
 
-FASTQ_1=`ls $CORE_PATH/Haiman_ProstateCa_SeqWholeExome_080814_1/FASTQ/CAFA9ANXX_1_ACGCTCGA_1.fastq.gz`
-FASTQ_2=`ls $CORE_PATH/Haiman_ProstateCa_SeqWholeExome_080814_1/FASTQ/CAFA9ANXX_1_ACGCTCGA_2.fastq.gz`
+	FASTQ_1="/mnt/research/active/QUMULO_TESTING/FASTQ/HJCNMDMXX_2_GTCGAAGA_CAATGTGG_1.fastq.gz"
+	FASTQ_2="/mnt/research/active/QUMULO_TESTING/FASTQ/HJCNMDMXX_2_GTCGAAGA_CAATGTGG_2.fastq.gz"
+	REF_GENOME="/mnt/shared_resources/public_resources/GRCh38DH/GRCh38_full_analysis_set_plus_decoy_hla.fa"
+	TEMP="/mnt/research/active/QUMULO_TESTING/TEMP"
 
-if [ $PLATFORM == 'ISILON' ]
-then
-REF_GENOME="/isilon/sequencing/GATK_resource_bundle/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta"
-else
-REF_GENOME="/jhg-qumulo/Sequencing/Seq_Proj/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta"
-fi
+	module load java/1.8.0_112
 
-if [ $PLATFORM == 'ISILON' ]
-then
-TEMP="/isilon/sequencing/Kurt/QUMOLO_TESTS/"
-else
-TEMP="/jhg-qumulo/Sequencing/Seq_Proj/QUMOLO_TESTS/"
-fi
+	BWA_DIR="/mnt/linuxtools/BWA/bwa-0.7.15"
+	SAMBLASTER_DIR="/mnt/linuxtools/SAMBLASTER/samblaster-v.0.1.24"
+	PICARD_DIR="/mnt/linuxtools/PICARD/picard-2.17.0"
 
-HOSTNAME=`hostname`
+	export PATH=".:$PATH:/bin"
 
-mkdir -p $TEMP/QUMOLO_TESTS/$HOSTNAME/$INSTANCE
+# make directories for the temporary output
+
+	mkdir -p $TEMP/$HOSTNAME/$INSTANCE
 
 START_BWA_MEM=`date '+%s'`
 
-bwa mem \
--t $THREADS \
-$REF_GENOME \
-$FASTQ_1 \
-$FASTQ_2 \
->| $TEMP/QUMOLO_TESTS/$HOSTNAME/$INSTANCE/foo.sam
+	$BWA_DIR/bwa mem \
+		-K 100000000 \
+		-Y \
+		-t 4 \
+		$REF_GENOME \
+		$FASTQ_1 \
+		$FASTQ_2 \
+	| $SAMBLASTER_DIR/samblaster \
+		--addMateTags \
+		-a \
+	| java -jar \
+	$PICARD_DIR/picard.jar \
+	AddOrReplaceReadGroups \
+	INPUT=/dev/stdin \
+	CREATE_INDEX=true \
+	SORT_ORDER=queryname \
+	RGID=FOO \
+	RGLB=FOO \
+	RGPL=ILLUMINA \
+	RGSM=FOO \
+	RGPU=BAR \
+	OUTPUT=$TEMP/$HOSTNAME/$INSTANCE/foo.bam
 
 END_BWA_MEM=`date '+%s'`
 
-echo BWA_MEM","$HOSTNAME","$INSTANCE","$THREADS","$TEST_TYPE","$PLATFORM","$JOB_COUNT","$QUEUE_SLOTS","$TOTAL_SLOTS","$START_BWA_MEM","$END_BWA_MEM \
->> /isilon/sequencing/Kurt/QUMOLO_TESTS/BWA_MEM.WALL_CLOCK_TIMES.csv
+echo BWA_MEM","$HOSTNAME","$INSTANCE","$THREADS","$TEST_TYPE","$JOB_COUNT","$QUEUE_SLOTS","$TOTAL_SLOTS","$START_BWA_MEM","$END_BWA_MEM \
+| awk 'BEGIN {FS=",";OFS=","} {print $0,$10-$9,($10-$9)/60,($10-$9)/3600}' \
+>> $TEMP/../BWA_MEM.WALL_CLOCK_TIMES.csv
