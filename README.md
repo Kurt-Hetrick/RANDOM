@@ -65,11 +65,33 @@ _example_
 
 takes the dups file and the master sample key and converts the local id to sm tag.
 
-writes the new file to you home directory
+writes the new file to your home directory
 
 _usage_
 
 `DUP_FILE_LOCAL_TO_SM_CONVERTER.sh /path/to/dup_file /path/to/master_key`
+
+## SELECT_SAMPLES_FROM_MS_VCF.sh
+
+takes a list of samples from a file (1 per row) and makes a vcf file containing only those samples
+
+file containing sample ids must have a .args file name extension
+
+input vcf can be uncompressed or compressed if indexed (has a paired .tbi file)
+
+removes loci that are not variant for the samples being extracted.
+
+removes unused alternate alleles that are not present in the samples being extracted.
+
+writes the new file in the same directory as the input vcf where samples are being extracted from
+
+_usage_
+
+`SELECT_SAMPLES_FROM_MS_VCF.sh /path/to/sample_list.args /path/to/original.vcf{.gz} new_vcf_file_name_prefix`
+
+_example_
+
+`/mnt/research/tools/LINUX/00_GIT_REPO_KURT/RANDOM/SELECT_SAMPLES_FROM_MS_VCF.sh /mnt/research/active/test.args /mnt/research/active/original.vcf test`
 
 ---
 
