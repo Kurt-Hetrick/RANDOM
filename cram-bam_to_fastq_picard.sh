@@ -46,6 +46,10 @@
 		REF_GENOME=$DEFAULT_REF_GENOME
 	fi
 
+# make output directory if it doesn't already exist
+
+	mkdir -p $OUT_DIR
+
 # stream bam/cram file with samtools in case cram file was made with htslib < 1.3.1 which was bugged.
 # revert back to original quality scores if present and resort back to query name and then convert back to fastq
 # See for further explanation: http://broadinstitute.github.io/picard/command-line-overview.html#SamToFastq
