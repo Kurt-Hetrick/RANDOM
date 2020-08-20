@@ -5,7 +5,7 @@
 #$ -S /bin/bash 
 
 # tell sge to submit any of these queue when available
-#$ -q prod.q,rnd.q,c6320.q,lemon.q,c6420.q
+#$ -q prod.q,rnd.q,c6320.q,lemon.q,c6420_21.q,c6420_23.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
@@ -35,7 +35,7 @@
 
 # input variables
 
-	INFILE=$1 # Input CRAM File
+	INFILE=$1 # Input CRAM or BAM File
 	OUT_DIR=$2 # Output Directory for Fastq Files
 	REF_GENOME=$3 # Reference genome in fasta format used for creating BAM file. Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
 
@@ -46,6 +46,7 @@
 		REF_GENOME=$DEFAULT_REF_GENOME
 	fi
 
+# stream bam/cram file with samtools in case cram file was made with htslib < 1.3.1 which was bugged.
 # revert back to original quality scores if present and resort back to query name and then convert back to fastq
 # See for further explanation: http://broadinstitute.github.io/picard/command-line-overview.html#SamToFastq
 #Can use picard versions 1.141 or later
@@ -55,9 +56,11 @@
 # If platform isn't present than set RG_TAG to ID (will need to create if condition in the future)
 # RG_TAG=ID \
 
-java -jar $PICARD_DIR/picard.jar \
+$SAMTOOLS_DIR/samtools view -h $INFILE \
+-T $REF_GENOME \
+| java -jar $PICARD_DIR/picard.jar \
 	RevertSam \
-	INPUT=$INFILE \
+	INPUT=/dev/stdin \
 	OUTPUT=/dev/stdout \
 	SORT_ORDER=queryname \
 	REFERENCE_SEQUENCE=$REF_GENOME \
