@@ -59,6 +59,27 @@ KNOWN_INDEL_FILES\
 
 # function for creating an arrary per sample containing the project that the sample belongs to using the qc report.
 
+	# grab field number for SM_TAG
+
+		SM_TAG_COLUMN=(`awk 1 $QC_REPORT \
+			| sed 's/\r//g; /^$/d' \
+			| head -n 1 \
+			| sed 's/,/\n/g' \
+			| cat -n \
+			| sed 's/^ *//g' \
+			| awk '$2=="SM_TAG" {print $1}'`)
+
+	# grab field number for PROJECT
+
+		PROJECT_COLUMN=(`awk 1 $QC_REPORT \
+				| sed 's/\r//g; /^$/d' \
+				| head -n 1 \
+				| sed 's/,/\n/g' \
+				| cat -n \
+				| sed 's/^ *//g' \
+				| awk '$2=="PROJECT" {print $1}'`)
+
+
 	CREATE_SAMPLE_ARRAY ()
 	{
 		SAMPLE_ARRAY=(`awk 1 $QC_REPORT \
