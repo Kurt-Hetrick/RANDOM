@@ -5,7 +5,7 @@
 #$ -S /bin/bash
 
 # tell sge to submit any of these queue when available
-#$ -q rnd.q,prod.q,c6420.q,lemon.q,c6320.q
+#$ -q rnd.q,prod.q,c6420_21.q,lemon.q,c6320.q,c6420_23.q
 
 # tell sge that you are in the users current working directory
 #$ -cwd
