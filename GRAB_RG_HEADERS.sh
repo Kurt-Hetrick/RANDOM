@@ -28,9 +28,9 @@
 				split($SM_TAG,SM_FIELD,":"); \
 				split($CN_TAG,CN_FIELD,":"); \
 				print PU_FIELD[2],\
-				SM_FIELD[2],\
 				LB_FIELD[2],\
 				DATE[2]"/"DATE[3]"/"DATE[1],\
+				SM_FIELD[2],\
 				CN_FIELD[2]}'
 	}
 
