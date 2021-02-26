@@ -32,7 +32,10 @@
 
 	IN_CRAM=$1 # Input CRAM File
 	BAM_DIR=$2 # Output BAM File Path
-	REF_GENOME=$3 # Reference genome used for creating BAM file. Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
+	REF_GENOME=$3 # Optional arugment.
+		# Reference genome used for creating BAM file.
+		# Needs to be indexed with samtools faidx (would have ref.fasta.fai companion file)
+		# if not supplied, defaulted to grch37, 1kg phase 2 ref.
 
 	DEFAULT_REF_GENOME=/mnt/research/tools/PIPELINE_FILES/bwa_mem_0.7.5a_ref/human_g1k_v37_decoy.fasta
 
@@ -47,7 +50,7 @@
 
 	mkdir -p $BAM_DIR
 
-# Using samtools-1.3 or later to convert a bam file to a cram file with the same file name with the .cram extension
+# Using samtools-1.3 or later to convert a cram file to a bam file with the same file name with the .bam extension
 # For further information: http://www.htslib.org/doc/samtools.html
 
 	$SAMTOOLS_DIR/samtools \
@@ -56,7 +59,7 @@
 	-o $BAM_DIR/$SM_TAG".bam" \
 	-T $REF_GENOME
 
-# Using samtools-1.3 or later to create an index file for the recently created cram file with the extension .crai
+# Using samtools-1.3 or later to create an index file for the recently created bam file with the extension .bai
 
 	$SAMTOOLS_DIR/samtools \
 	index \
