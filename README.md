@@ -85,9 +85,13 @@ removes unused alternate alleles that are not present in the samples being extra
 
 writes the new file in the same directory as the input vcf where samples are being extracted from
 
+this assumes by default that the 1kg version of GRCh37 is what the reference genome was, if another genome is used you can add the path to the other genome at the end of the command line (see below)
+
 _usage_
 
-`SELECT_SAMPLES_FROM_MS_VCF.sh /path/to/sample_list.args /path/to/original.vcf{.gz} new_vcf_file_name_prefix`
+`SELECT_SAMPLES_FROM_MS_VCF.sh /path/to/sample_list.args /path/to/original.vcf{.gz} new_vcf_file_name_prefix {/path/to/different_reference_genome.fasta}`
+
+NOTE: {/path/to/different_reference_genome.fasta} means that this is an optional argument. You only need to supply it if the vcf file was called using a different reference genome than the 1000 genomes phase 2 version of GRCh37 (human_g1k_v37_decoy.fasta). Also both .fasta and .fa extensions are allowed.
 
 _example_
 
